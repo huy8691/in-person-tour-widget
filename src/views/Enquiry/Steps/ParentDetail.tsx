@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
 import React, { useEffect, useState } from "react";
+import moment from "moment";
 
 import { ControlledInput } from "@/components/custom/ControlledInput";
 import EnquiryInput from "@/components/custom/EnquiryInput";
@@ -88,51 +89,29 @@ function ParentDetail(props: IParentEnquiryProps) {
   const [datePickerError, setDatePickerError] = useState("");
 
   const formatTime = (dateTime: any) => {
-    const date = new Date(dateTime);
-    const options: Intl.DateTimeFormatOptions = {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    };
-    return date.toLocaleTimeString("en-US", options);
+    return moment(dateTime).format("h:mm a");
   };
 
   const formatDateCode = (dateString: string) => {
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const date = new Date(dateString);
+    const m = moment(dateString);
     return {
-      dayCode: days[date.getDay()],
-      day: date.getDate().toString().padStart(2, "0"),
-      month: months[date.getMonth()],
+      dayCode: m.format("ddd"),
+      day: m.format("DD"),
+      month: m.format("MMM"),
     };
   };
 
   const transformData = (data: any[], sDate: string, eDate: string) => {
-    const startDate = new Date(sDate);
-    const endDate = new Date(eDate);
-    endDate.setDate(endDate.getDate() + 1);
-    endDate.setHours(0, 0, 0, 0);
+    const startDate = moment(sDate).startOf("day");
+    const endDate = moment(eDate).endOf("day");
+
     const availabilityDetails: any[] = [];
     for (const availability of data ?? []) {
-      const startTime = new Date(availability.startTime);
-      const endTime = new Date(availability.endTime);
-      const date = availability.startTime.slice(0, 10);
+      const startTime = moment(availability.startTime);
+      const endTime = moment(availability.endTime);
+      const date = startTime.format("YYYY-MM-DD");
 
-      if (startTime >= startDate && endTime < endDate) {
+      if (startTime.isSameOrAfter(startDate) && endTime.isSameOrBefore(endDate)) {
         const time = {
           date,
           label: formatTime(startTime),
@@ -148,8 +127,10 @@ function ParentDetail(props: IParentEnquiryProps) {
       }
     }
     const result: any[] = [];
-    while (startDate <= endDate) {
-      const formattedDate = startDate.toISOString().slice(0, 10);
+    let curr = moment(startDate);
+    const last = moment(endDate).startOf("day");
+    while (curr.isSameOrBefore(last)) {
+      const formattedDate = curr.format("YYYY-MM-DD");
       const timesDetail = availabilityDetails.find((x) => x.date === formattedDate);
       result.push({
         date: formattedDate,
@@ -157,7 +138,7 @@ function ParentDetail(props: IParentEnquiryProps) {
         times: timesDetail ? timesDetail.times : [],
         active: false,
       });
-      startDate.setDate(startDate.getDate() + 1);
+      curr.add(1, "day");
     }
     return result;
   };
@@ -190,20 +171,19 @@ function ParentDetail(props: IParentEnquiryProps) {
   }, [props.enquiryDetail?.pickerTimePersonTour]);
 
   const loadMoreDates = (type: number) => {
-    const baseDate = liveTourInfo.startDate ? new Date(liveTourInfo.startDate) : new Date();
-    let newStartDate: Date;
+    const baseDate = liveTourInfo.startDate ? moment(liveTourInfo.startDate) : moment();
+    let newStartDate: moment.Moment;
 
     if (type === 1) {
-      newStartDate = new Date(baseDate.setDate(baseDate.getDate() + 7));
+      newStartDate = baseDate.add(7, "days");
     } else {
-      newStartDate = new Date(baseDate.setDate(baseDate.getDate() - 7));
+      newStartDate = baseDate.subtract(7, "days");
     }
 
-    const newEndDate = new Date(newStartDate);
-    newEndDate.setDate(newEndDate.getDate() + 6);
+    const newEndDate = moment(newStartDate).add(6, "days");
 
-    const _startDateStr = newStartDate.toLocaleDateString("en-CA");
-    const _endDateStr = newEndDate.toLocaleDateString("en-CA");
+    const _startDateStr = newStartDate.format("YYYY-MM-DD");
+    const _endDateStr = newEndDate.format("YYYY-MM-DD");
 
     setLiveTourInfo((prev: any) => ({
       ...prev,
@@ -248,12 +228,11 @@ function ParentDetail(props: IParentEnquiryProps) {
   };
 
   const jumpToDate = (dateStr: string) => {
-    const startDate = new Date(dateStr);
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 6);
+    const startDate = moment(dateStr);
+    const endDate = moment(startDate).add(6, "days");
 
-    const _startDateStr = startDate.toLocaleDateString("en-CA");
-    const _endDateStr = endDate.toLocaleDateString("en-CA");
+    const _startDateStr = startDate.format("YYYY-MM-DD");
+    const _endDateStr = endDate.format("YYYY-MM-DD");
 
     setLiveTourInfo((prev: any) => ({
       ...prev,
@@ -407,7 +386,7 @@ function ParentDetail(props: IParentEnquiryProps) {
         </RequiredCard>
       )}
       <form onSubmit={handleSubmit(onSubmit, onError)}>
-        <div className="md:max-w-[400px] space-y-4 px-4">
+        <div className="space-y-4">
           <DatePickerField
             liveTourInfo={liveTourInfo}
             setLiveTourInfo={setLiveTourInfo}
@@ -418,7 +397,7 @@ function ParentDetail(props: IParentEnquiryProps) {
             errorMessage={datePickerError}
             selectedSlotString={
               chooseTime.slot
-                ? `${new Date(chooseTime.tourDate || "").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })} at ${chooseTime.tourTime}`
+                ? `${moment(chooseTime.tourDate).format("D MMMM YYYY")} at ${chooseTime.tourTime}`
                 : ""
             }
             onSlotSelect={(date, time, slot) => {
@@ -507,7 +486,7 @@ function ParentDetail(props: IParentEnquiryProps) {
               )}
             />
 
-            <div className="pl-6 mt-1 space-y-1">
+            <div className="mt-1 space-y-1">
               {!isValidAustralianAreaCode && (
                 <ErrorContactNumber isError={isAustralianMobilePhoneNumber}>
                   Mobile: start with &apos;04&apos;.
@@ -527,22 +506,22 @@ function ParentDetail(props: IParentEnquiryProps) {
           </div>
         </div>
         <div>
-          <div className="mx-auto md:max-w-[400px] flex gap-[12px] items-center my-8 px-4">
+          <div className="flex gap-[12px] items-center my-8">
             {props.onBack && (
               <Button
                 type="button"
                 variant="outline"
                 onClick={props.onBack}
-                className="flex-[1_0_0] bg-white text-primary border-primary border-[1.5px] hover:bg-white my-0 rounded-[32px] h-[48px] px-[32px] py-[8px] font-semibold text-[16px] leading-[24px]"
+                className="flex-[1_0_0] bg-white text-primary border-primary border-[1.5px] hover:bg-primary hover:text-white my-0 rounded-[32px] h-[48px] px-[32px] py-[8px] font-semibold text-[16px] leading-[24px] cursor-pointer"
               >
                 Back
               </Button>
             )}
             <Button
-              // disabled={!isNextDisabled}
+              disabled={isNextDisabled}
               type="submit"
               variant="default"
-              className="flex-[1_0_0] my-0 parent-detail next-button-step-2 rounded-[32px] h-[48px] px-[32px] py-[8px] font-semibold text-[16px] leading-[24px] disabled:bg-[#e3e1dd] disabled:text-[#898886] disabled:opacity-100 disabled:shadow-none"
+              className="flex-[1_0_0] my-0 parent-detail next-button-step-2 rounded-[32px] h-[48px] px-[32px] py-[8px] font-semibold text-[16px] leading-[24px] bg-primary text-white cursor-pointer disabled:bg-[#E3E1DD] disabled:text-[#898886] disabled:opacity-100 disabled:shadow-none disabled:cursor-not-allowed"
             >
               Next
             </Button>

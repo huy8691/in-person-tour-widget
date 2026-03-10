@@ -5,8 +5,8 @@ export const API_CONFIG = {
 
   // API Endpoints
   ENDPOINTS: {
-    // White label endpoints (shared widget config)
-    PROVIDER_CONFIG: "/api/portal/whitelabelccs",
+    // In-person tour widget config (brand/group-level)
+    PROVIDER_CONFIG: "/api/ipt/widgetconfig",
 
     // Enquiry / in-person tour endpoints
     ENQUIRY_SEND: "/enquiry",
@@ -88,6 +88,19 @@ export function getBrandCentresUrl(
 
 export function getCentreWidgetConfigUrl(centreUserId: string | number): string {
   return buildApiUrl(`${API_CONFIG.ENDPOINTS.CENTRE_WIDGET_CONFIG}/${centreUserId}`);
+}
+
+export function getCentresForWidgetUrl(options: {
+  centreBrandId?: number | null;
+  centreGroupId?: number | null;
+}) {
+  const qs = new URLSearchParams();
+  if (options.centreBrandId) {
+    qs.set("centreBrandId", String(options.centreBrandId));
+  } else if (options.centreGroupId) {
+    qs.set("centreGroupId", String(options.centreGroupId));
+  }
+  return `${buildApiUrl(API_CONFIG.ENDPOINTS.CENTRE_WIDGET_CONFIG)}?${qs.toString()}`;
 }
 
 // Helper to slugify suburb names consistently with site URLs

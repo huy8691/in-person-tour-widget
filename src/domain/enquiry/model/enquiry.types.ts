@@ -10,6 +10,7 @@ export interface PayloadGa4 {
 export interface CentreWidgetConfig {
   centreUserId: number;
   centreName: string;
+  centreAddress: string;
   hasLiveTourBooking: boolean;
   centreLogo: string | null;
   token: string;
@@ -25,6 +26,9 @@ export interface CentreWidgetConfig {
   centreSuburb?: string;
   centreState?: string;
   centreSuburbIdHash?: string;
+  reviewCombinedCount: number;
+  reviewCombined: number;
+  telephone?: string;
 }
 
 export interface CentreWidgetConfigResponse {

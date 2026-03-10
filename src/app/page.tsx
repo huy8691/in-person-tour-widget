@@ -7,8 +7,6 @@ import SelectCentreByBrand from "@/views/Enquiry/Steps/SelectCentreByBrand";
 import { useCentres } from "@/providers";
 import type { CentreWidgetConfig } from "@/domain/enquiry/model/enquiry.types";
 
-const BRAND_ID = Number(process.env.NEXT_PUBLIC_BRAND_ID ?? "19");
-
 export default function Home() {
   const [selectedCentre, setSelectedCentre] = useState<Centre | null>(null);
   const [centreConfig, setCentreConfig] = useState<CentreWidgetConfig | null>(null);
@@ -121,23 +119,23 @@ export default function Home() {
           centreUserIdHash={selectedCentre.CentreUserIdHash ?? ""}
           listingType={selectedCentre.ListingType}
           centreName={selectedCentre.Name}
+          centreTelephone={centreConfig?.telephone ?? selectedCentre.Telephone}
           centreAddress={[
-            selectedCentre.AddressLine1,
-            selectedCentre.Suburb,
-            selectedCentre.State,
-            selectedCentre.Postcode,
+            centreConfig.centreAddress,
+            centreConfig.centreSuburb,
+            centreConfig.centreState,
+            centreConfig.centrePostcode,
           ]
             .filter(Boolean)
             .join(", ")}
           centreLogo={selectedCentre.LogoUrl}
-          ratingAverage={selectedCentre.RatingAverageCombined}
-          reviewCount={selectedCentre.ReviewCountCombined}
+          ratingAverage={centreConfig?.reviewCombined ?? selectedCentre.RatingAverageCombined}
+          reviewCount={centreConfig?.reviewCombinedCount ?? selectedCentre.ReviewCountCombined}
           centreConfig={centreConfig}
           onBack={() => setSelectedCentre(null)}
         />
       ) : (
         <SelectCentreByBrand
-          brandId={BRAND_ID}
           onSelected={(c, details) => {
             setSelectedCentre(c);
             if (details) setCentreConfig(details);

@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import React, { useEffect, useRef, useState } from "react";
+import moment from "moment";
 
 type Slot = {
   date: string;
@@ -31,13 +32,14 @@ interface DatePickerFieldProps {
 }
 
 // Build list of upcoming months: from today spanning 12 months ahead
-function buildMonthOptions(fromDate: Date): { label: string; value: string }[] {
+function buildMonthOptions(fromDate: any): { label: string; value: string }[] {
   const options: { label: string; value: string }[] = [];
+  const start = moment(fromDate).startOf("month");
   for (let i = 0; i <= 12; i++) {
-    const d = new Date(fromDate.getFullYear(), fromDate.getMonth() + i, 1);
+    const d = moment(start).add(i, "months");
     options.push({
-      label: d.toLocaleString("en-US", { month: "long", year: "numeric" }),
-      value: d.toLocaleDateString("en-CA"), // YYYY-MM-DD
+      label: d.format("MMMM YYYY"),
+      value: d.format("YYYY-MM-DD"),
     });
   }
   return options;
@@ -75,12 +77,11 @@ export const DatePickerField: React.FC<DatePickerFieldProps> = ({
   // Current Month / Year for the top text
   const currentMonthYear = React.useMemo(() => {
     if (!liveTourInfo?.startDate) return "";
-    const date = new Date(liveTourInfo.startDate);
-    return date.toLocaleString("en-US", { month: "long", year: "numeric" });
+    return moment(liveTourInfo.startDate).format("MMMM YYYY");
   }, [liveTourInfo?.startDate]);
 
   // Month options list (today → 12 months ahead)
-  const monthOptions = React.useMemo(() => buildMonthOptions(new Date()), []);
+  const monthOptions = React.useMemo(() => buildMonthOptions(moment()), []);
 
   // Scroll active month into view when picker opens
   useEffect(() => {
@@ -94,19 +95,7 @@ export const DatePickerField: React.FC<DatePickerFieldProps> = ({
 
   const sortSlotsByAscending = (slots: Slot[]): Slot[] => {
     return [...slots].sort((a, b) => {
-      const timeA = a.label;
-      const timeB = b.label;
-      function parseTime(timeStr: string) {
-        const [hours, minutes] = timeStr.split(":");
-        let hour = parseInt(hours);
-        if (timeStr.includes("PM") && hour !== 12) {
-          hour += 12;
-        } else if (timeStr.includes("AM") && hour === 12) {
-          hour = 0;
-        }
-        return hour * 60 + parseInt(minutes);
-      }
-      return parseTime(timeA) - parseTime(timeB);
+      return moment(a.label, "h:mm A").diff(moment(b.label, "h:mm A"));
     });
   };
 
@@ -291,7 +280,7 @@ export const DatePickerField: React.FC<DatePickerFieldProps> = ({
                 })}
               </div>
               <div className="flex items-center justify-between w-full">
-                {liveTourInfo?.startDate !== new Date().toISOString().slice(0, 10) ? (
+                {liveTourInfo?.startDate !== moment().format("YYYY-MM-DD") ? (
                   <div
                     onClick={() => loadMoreDates(-1)}
                     className="cursor-pointer flex gap-1 items-center justify-center px-1 text-[#696866] hover:text-[#3a3a3a]"

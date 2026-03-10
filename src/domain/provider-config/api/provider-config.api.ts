@@ -1,4 +1,5 @@
 import { getProviderConfigUrl, API_CONFIG } from "@/config/api";
+import moment from "moment";
 import type { ProviderConfig } from "@/domain/provider-config/model/provider-config.types";
 
 function domainsMatch(candidate: string, domain: string): boolean {
@@ -47,8 +48,15 @@ export const defaultProviderConfig: ProviderConfig = {
   resultFeature: 1,
   resultFeatureData: '{"centers": ["Care for Kids Center 1", "Care for Kids Center 2"]}',
   centreListStyle: 0,
-  created: new Date().toISOString(),
+  created: moment().toISOString(),
 };
+
+function sanitizeColor(color: string | null | undefined): string | null {
+  if (!color) return null;
+  // Trim and collapse multiple leading #'s to a single #
+  const cleaned = color.trim().replace(/^#{2,}/, "#");
+  return cleaned;
+}
 
 export async function fetchProviderConfig(id?: string): Promise<ProviderConfig> {
   if (!id) return defaultProviderConfig;
@@ -68,7 +76,8 @@ export async function fetchProviderConfig(id?: string): Promise<ProviderConfig> 
       clearTimeout(timeout);
 
       if (res.ok) {
-        const apiConfig = await res.json();
+        const root = await res.json();
+        const apiConfig = root?.data ?? root;
 
         const mapped: ProviderConfig = {
           id: apiConfig.id ?? parseInt(id),
@@ -78,28 +87,27 @@ export async function fetchProviderConfig(id?: string): Promise<ProviderConfig> 
           payingLicense: Boolean(apiConfig.payingLicense),
           domain: apiConfig.domain ?? "",
           primaryColour:
-            apiConfig.primaryColor ??
+            sanitizeColor(apiConfig.primaryColor) ??
             apiConfig.primaryColour ??
             defaultProviderConfig.primaryColour,
           secondaryColour:
-            apiConfig.secondaryColor ??
+            sanitizeColor(apiConfig.secondaryColor) ??
             apiConfig.secondaryColour ??
             defaultProviderConfig.secondaryColour,
           accentColour:
-            apiConfig.accentColor ??
+            sanitizeColor(apiConfig.accentColor) ??
             apiConfig.accentColour ??
             defaultProviderConfig.accentColour,
           fontFamily: apiConfig.fontFamily ?? defaultProviderConfig.fontFamily,
-          logo: apiConfig.logo ?? "",
+          logo: apiConfig.logo ?? apiConfig.brandGroupLogo ?? "",
           resultFeature: Number(apiConfig.resultFeature ?? defaultProviderConfig.resultFeature),
-          resultFeatureData:
-            apiConfig.resultFeatureData ?? defaultProviderConfig.resultFeatureData,
+          resultFeatureData: apiConfig.resultFeatureData ?? defaultProviderConfig.resultFeatureData,
           centreListStyle: Number(
-            apiConfig.centreListStyle ?? (defaultProviderConfig as any).centreListStyle ?? 0
+            apiConfig.centreListStyle ?? (defaultProviderConfig as any).centreListStyle ?? 0,
           ),
           centreBrandId: apiConfig.centreBrandId ?? null,
           centreGroupId: apiConfig.centreGroupId ?? null,
-          created: apiConfig.created ?? new Date().toISOString(),
+          created: apiConfig.created ?? moment().toISOString(),
         };
 
         const isValidDomain = validateDomain(mapped.domain);
@@ -119,4 +127,3 @@ export async function fetchProviderConfig(id?: string): Promise<ProviderConfig> 
 
   return defaultProviderConfig;
 }
-

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Icon } from "@iconify/react";
 import React, { useEffect, useState } from "react";
+import moment from "moment";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import * as Yup from "yup";
@@ -36,32 +37,32 @@ const startDate = [
   {
     label: "ASAP",
     value: "ASAP",
-    startDate: new Date(),
-    endDate: new Date(new Date().setDate(new Date().getDate() + 6)),
+    startDate: moment().toDate(),
+    endDate: moment().add(6, "days").toDate(),
   },
   {
     label: "In the next 30 days",
     value: "30d",
-    startDate: new Date(),
-    endDate: new Date(new Date().setDate(new Date().getDate() + 6)),
+    startDate: moment().toDate(),
+    endDate: moment().add(6, "days").toDate(),
   },
   {
     label: "3 months",
     value: "3m",
-    startDate: new Date(),
-    endDate: new Date(new Date().setDate(new Date().getDate() + 6)),
+    startDate: moment().toDate(),
+    endDate: moment().add(6, "days").toDate(),
   },
   {
     label: "6 months",
     value: "6m",
-    startDate: new Date(),
-    endDate: new Date(new Date().setDate(new Date().getDate() + 6)),
+    startDate: moment().toDate(),
+    endDate: moment().add(6, "days").toDate(),
   },
   {
     label: "12 months",
     value: "12m",
-    startDate: new Date(),
-    endDate: new Date(new Date().setDate(new Date().getDate() + 6)),
+    startDate: moment().toDate(),
+    endDate: moment().add(6, "days").toDate(),
   },
 ];
 
@@ -97,13 +98,10 @@ const validationSchema = Yup.object({
         "Date cannot be in the future",
         function (value) {
           if (!value) return true;
-          const today = new Date();
-          const [day, month, year] = value.split("-").map(Number);
-          if (!day || !month || !year) {
-            return true;
-          }
-          const inputDate = new Date(Number(year), Number(month) - 1, Number(day));
-          return inputDate <= today;
+          const today = moment();
+          const mInput = moment(value, "DD-MM-YYYY");
+          if (!mInput.isValid()) return true;
+          return mInput.isSameOrBefore(today, "day");
         },
       ),
       careDays: Yup.array()
@@ -271,7 +269,7 @@ function ChildDetailEnquiry(props: IStartEnquiryProps) {
   const itemsLength = Array.isArray(errors.items) ? errors.items.length : 0;
 
   return (
-    <div className="px-4">
+    <div>
       <h2 className="block text-[#3A3A3A] text-[22px] font-semibold leading-7 mb-6">
         Provide your child’s details to the centre
       </h2>
@@ -504,7 +502,50 @@ function ChildDetailEnquiry(props: IStartEnquiryProps) {
                       </span>
                     )}
                   </div>
+                  <div>
+                    <label htmlFor={"child-start-date"} className="font-medium flex text-[#3A3A3A]">
+                      Select your preferred start date<span className="text-[#e13119] ml-1">*</span>
+                    </label>
 
+                    <div className="mt-2">
+                      <Select
+                        value={childDetailData[index].startDate?.value || ""}
+                        onValueChange={(value) => {
+                          const selectedOption = startDate.find((item) => item.value === value);
+                          if (selectedOption) {
+                            handleSelectStartDate(selectedOption, index);
+                            trigger(`items.${index}.startDate`);
+                          }
+                        }}
+                      >
+                        <SelectTrigger className="w-full bg-white border border-[#e3e1dd] rounded-[8px] py-[24px] px-[8px] text-[16px] text-[#898886]">
+                          <SelectValue placeholder="Start Date" />
+                        </SelectTrigger>
+                        <SelectContent className="z-[9999]">
+                          {startDate.map((item, i) => (
+                            <SelectItem
+                              key={i}
+                              value={item.value}
+                              className="focus:bg-[var(--primary-soft)] data-[highlighted]:bg-[var(--primary-soft)] focus:text-[#3a3a3a] data-[highlighted]:text-[#3a3a3a]"
+                            >
+                              {item.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {(errors as any).items?.[index]?.startDate?.message && (
+                      <span className="mt-1 flex-1 flex gap-x-2 items-center text-[#EA5743]">
+                        <Icon
+                          className="flex-shrink-0"
+                          icon="ph:warning-circle"
+                          width="16"
+                          height="16"
+                        />
+                        {(errors as any).items?.[index]?.startDate.message}
+                      </span>
+                    )}
+                  </div>
                   <div>
                     <label htmlFor={"child-care-days"} className="font-medium flex text-[#3A3A3A]">
                       Care Days<span className="text-[#e13119] ml-1">*</span>
@@ -541,46 +582,7 @@ function ChildDetailEnquiry(props: IStartEnquiryProps) {
                     )}
                   </div>
 
-                  <div>
-                    <label htmlFor={"child-start-date"} className="font-medium flex text-[#3A3A3A]">
-                      Select your preferred start date<span className="text-[#e13119] ml-1">*</span>
-                    </label>
-
-                    <div className="mt-2">
-                      <Select
-                        value={childDetailData[index].startDate?.value || ""}
-                        onValueChange={(value) => {
-                          const selectedOption = startDate.find((item) => item.value === value);
-                          if (selectedOption) {
-                            handleSelectStartDate(selectedOption, index);
-                            trigger(`items.${index}.startDate`);
-                          }
-                        }}
-                      >
-                        <SelectTrigger className="w-full bg-white border border-[#e3e1dd] rounded-[8px] py-[24px] px-[8px] text-[16px] text-[#898886]">
-                          <SelectValue placeholder="Start Date" />
-                        </SelectTrigger>
-                        <SelectContent className="z-[9999]">
-                          {startDate.map((item, i) => (
-                            <SelectItem key={i} value={item.value}>
-                              {item.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    {(errors as any).items?.[index]?.startDate?.message && (
-                      <span className="mt-1 flex-1 flex gap-x-2 items-center text-[#EA5743]">
-                        <Icon
-                          className="flex-shrink-0"
-                          icon="ph:warning-circle"
-                          width="16"
-                          height="16"
-                        />
-                        {(errors as any).items?.[index]?.startDate.message}
-                      </span>
-                    )}
-                  </div>
+                 
                 </>
               )}
             </React.Fragment>
@@ -611,19 +613,19 @@ function ChildDetailEnquiry(props: IStartEnquiryProps) {
         )}
 
         <div>
-          <div className="mx-auto md:max-w-[400px] flex gap-[12px] items-center my-8 px-4">
+          <div className="flex gap-[12px] items-center my-8">
             {props.onBack ? (
               <Button
                 type="button"
                 variant="outline"
                 onClick={props.onBack}
-                className="flex-[1_0_0] bg-white text-primary border-primary border-[1.5px] hover:bg-gray-50 my-0 lg:md:mb-0 rounded-[32px] h-[48px] font-semibold text-[16px]"
+                className="flex-[1_0_0] bg-white text-primary border-primary border-[1.5px] hover:bg-primary hover:text-white my-0 lg:md:mb-0 rounded-[32px] h-[48px] font-semibold text-[16px] cursor-pointer"
               >
                 Back
               </Button>
             ) : (
               <div
-                className="flex-[1_0_0] bg-white border-primary border-[1.5px] hover:bg-gray-50 my-0 lg:md:mb-0 rounded-[32px] h-[48px] font-semibold text-[16px] flex items-center justify-center cursor-pointer text-primary"
+                className="flex-[1_0_0] bg-white border-primary border-[1.5px] hover:bg-primary hover:text-white my-0 lg:md:mb-0 rounded-[32px] h-[48px] font-semibold text-[16px] flex items-center justify-center cursor-pointer text-primary"
                 onClick={() => {
                   const el = document.getElementById("main-content-enquiry") as any;
                   el?.scrollTo?.(0, 0);
@@ -641,7 +643,7 @@ function ChildDetailEnquiry(props: IStartEnquiryProps) {
               }}
               disabled={pickerTimePersonTour?.isDateTimeApiLoading || props.isSubmitting}
               form="children-detail-form"
-              className="flex-[1_0_0] my-0 lg:md:mb-0 child-detail next-button-step-3 rounded-[32px] h-[48px] font-semibold text-[16px] flex items-center justify-center gap-2"
+              className="flex-[1_0_0] my-0 lg:md:mb-0 child-detail next-button-step-3 rounded-[32px] h-[48px] font-semibold text-[16px] flex items-center justify-center gap-2 bg-primary text-white cursor-pointer disabled:bg-[#E3E1DD] disabled:text-[#898886] disabled:opacity-100 disabled:shadow-none disabled:cursor-not-allowed"
               type="submit"
               variant="default"
             >

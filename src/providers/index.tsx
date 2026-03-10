@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode, useState, useEffect, Suspense } from "react";
+import moment from "moment";
 import { useSearchParams } from "next/navigation";
 import { Loading } from "@/components/ui/loading";
 import { SplashScreen } from "@/components/ui/splash-screen";
@@ -16,6 +17,7 @@ import {
   type ThemeProviderProps,
 } from "next-themes";
 import { Centre } from "@/types/centre";
+import { getCentresForWidgetUrl } from "@/config/api";
 
 // Next.js Theme Provider Wrapper
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
@@ -44,36 +46,22 @@ export function useProviderConfig(providerParam?: string | null) {
 
   useEffect(() => {
     async function loadConfig() {
-      const startTime = Date.now();
+      const startTime = moment().valueOf();
       
       try {
         setLoading(true);
         setError(null);
 
-        // Get provider ID from URL params
+        // Determine provider ID (must be present in URL / param)
         const urlParams = new URLSearchParams(window.location.search);
-        const providerId = urlParams.get("providerId") || undefined;
+        const urlProviderId = urlParams.get("providerId") || urlParams.get("id") || undefined;
+        const providerId = providerParam || urlProviderId || undefined;
 
-        // If no providerId, use default config immediately (no API call needed)
         if (!providerId) {
-          setConfig(defaultProviderConfig);
-          setApiDuration(0); // No API call, duration is 0
+          setConfig(null);
+          setApiDuration(0);
+          setError("Provider configuration is missing. Please supply a valid providerId in the URL.");
           setLoading(false);
-          
-          // Apply default theme
-          requestAnimationFrame(() => {
-            applyProviderTheme({
-              primaryColor: defaultProviderConfig.primaryColour,
-              secondaryColor: defaultProviderConfig.secondaryColour,
-              accentColor: defaultProviderConfig.accentColour,
-              fontFamily: defaultProviderConfig.fontFamily,
-              logo: defaultProviderConfig.logo,
-              payingLicense: defaultProviderConfig.payingLicense,
-              domain: defaultProviderConfig.domain,
-              resultFeature: defaultProviderConfig.resultFeature,
-              resultFeatureData: defaultProviderConfig.resultFeatureData,
-            });
-          });
           return;
         }
 
@@ -81,7 +69,7 @@ export function useProviderConfig(providerParam?: string | null) {
         const providerConfig = await fetchProviderConfig(providerId);
         
         // Calculate API call duration
-        const duration = Date.now() - startTime;
+        const duration = moment().valueOf() - startTime;
         
         // If we have providerId but got defaultConfig (id is null), it means API failed
         // fetchConfig returns defaultConfig (id: null) on failure
@@ -163,7 +151,7 @@ const defaultConfig: ProviderConfig = {
   resultFeatureData:
     '{"centers": ["Care for Kids Center 1", "Care for Kids Center 2"]}',
   centreListStyle: 0,
-  created: new Date().toISOString(),
+  created: moment().toISOString(),
 };
 
 // Provider Layout Component
@@ -178,21 +166,34 @@ function ProviderLayoutContent({ children }: ProviderLayoutProps) {
   
   const [centres, setCentres] = useState<Centre[]>([]);
 
-  const brandId = searchParams.get("brandId") ?? process.env.NEXT_PUBLIC_BRAND_ID ?? "1";
-  const fetchedBrandIdRef = React.useRef<string | null>(null);
+  // Keep brandId param as optional override, but primary source is provider config
+  const brandIdParam = searchParams.get("brandId");
+  const fetchedKeyRef = React.useRef<string | null>(null);
 
   useEffect(() => {
-    if (fetchedBrandIdRef.current === brandId) return;
-    fetchedBrandIdRef.current = brandId;
+    if (!config) return;
+
+    const centreBrandId =
+      config.centreBrandId ?? (brandIdParam ? Number(brandIdParam) : null);
+    const centreGroupId = config.centreGroupId ?? null;
+
+    if (!centreBrandId && !centreGroupId) {
+      console.warn("No centreBrandId or centreGroupId found in provider config");
+      return;
+    }
+
+    const fetchKey = `${centreBrandId ?? ""}-${centreGroupId ?? ""}`;
+    if (fetchedKeyRef.current === fetchKey) return;
+    fetchedKeyRef.current = fetchKey;
 
     const fetchCentres = async () => {
       try {
-        const url = `https://staging.careforkids.com.au/api/ipt/widgetconfig/centres?centreBrandId=${brandId}`;
+        const url = getCentresForWidgetUrl({ centreBrandId, centreGroupId });
 
         const response = await fetch(url, {
           method: "GET",
           headers: {
-            "Authorization": "Bearer {{access}}",
+            Accept: "application/json",
           },
         });
 
@@ -223,13 +224,13 @@ function ProviderLayoutContent({ children }: ProviderLayoutProps) {
     };
 
     fetchCentres();
-  }, [brandId]);
+  }, [config, brandIdParam]);
   
   // State to control splash screen display
   // With Next.js Router, component doesn't remount on URL changes, so state persists
   const [showSplash, setShowSplash] = useState(true);
   const [isFadingOut, setIsFadingOut] = useState(false);
-  const splashStartTimeRef = React.useRef(Date.now());
+  const splashStartTimeRef = React.useRef(moment().valueOf());
   
   // Calculate display duration: use API duration if > 1000ms, otherwise use 1000ms minimum
   const minDisplayDuration = React.useMemo(() => {
@@ -243,7 +244,7 @@ function ProviderLayoutContent({ children }: ProviderLayoutProps) {
   // Handle splash screen fade out when loading completes and min time passed
   useEffect(() => {
     if (!loading && showSplash) {
-      const elapsed = Date.now() - splashStartTimeRef.current;
+      const elapsed = moment().valueOf() - splashStartTimeRef.current;
       const remainingTime = Math.max(0, minDisplayDuration - elapsed);
       
       // Wait for minimum display time, then start fade out

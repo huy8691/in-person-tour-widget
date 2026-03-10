@@ -52,7 +52,7 @@ export default function RootLayout({
               <img
                 src="/img/logos/careforkids-logo.svg"
                 alt="Care for Kids"
-                className="h-[14px] w-auto"
+                className="max-w-[104px] w-auto"
               />
             </div>
           </div>

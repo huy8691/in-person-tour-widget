@@ -1,4 +1,3 @@
-import Image from "next/image";
 import React, { useState } from "react";
 import styles from "./LocationInfoHeader.module.scss";
 import type { CentreWidgetConfig } from "@/domain/enquiry/model/enquiry.types";
@@ -14,7 +13,6 @@ interface LocationInfoHeaderProps {
 
 const LocationInfoHeader: React.FC<LocationInfoHeaderProps> = ({
   name,
-  address,
   logoUrl,
   ratingAverage,
   reviewCount,
@@ -63,30 +61,39 @@ const LocationInfoHeader: React.FC<LocationInfoHeaderProps> = ({
   const primaryColor = sanitizeColor(config?.primaryColor);
   const secondaryColor = sanitizeColor(config?.secondaryColor);
 
+  const withCacheBust = (src: string) => {
+    if (!src) return src;
+    const [base, query = ""] = src.split("?");
+    const params = new URLSearchParams(query);
+    // Use centreUserId when available so URL is stable per centre
+    const key = config?.centreUserId ?? "centre";
+    params.set("v", String(key));
+    const qs = params.toString();
+    return qs ? `${base}?${qs}` : `${base}`;
+  };
+
   return (
     <div
       className={styles.container}
       style={config?.fontFamily ? { fontFamily: config.fontFamily } : {}}
     >
       <div className={styles.logoWrapper}>
-        <Image
-          src={logoSrc}
-          alt={displayName}
-          width={96}
-          height={96}
-          className={styles.logo}
-          onError={() => setLogoSrc("/img/centre-logo-placeholder.svg")}
-        />
+        <div className="border border-[#e3e1dd] border-solid relative rounded-lg shrink-0 w-24 h-24 flex items-center justify-center overflow-hidden">
+          <img
+            src={withCacheBust(logoSrc)}
+            alt={displayName}
+            width={96}
+            height={96}
+            className="object-contain p-2 w-full h-full"
+            onError={() => setLogoSrc("/img/centre-logo-placeholder.svg")}
+          />
+        </div>
       </div>
       <div className={styles.details}>
-        <h3 className={styles.name} style={primaryColor ? { color: primaryColor } : {}}>
+        <h3 className={styles.name}>
           {displayName}
         </h3>
-        {address && (
-          <p className={styles.address} style={primaryColor ? { color: primaryColor } : {}}>
-            {address}
-          </p>
-        )}
+
         <div className={styles.reviews}>
           <div className={styles.stars}>{renderStars(ratingAverage ?? 0)}</div>
           {reviewCount !== null && reviewCount > 0 && (

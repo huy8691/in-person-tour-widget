@@ -6,6 +6,7 @@ import { env } from "@/environment";
 import { Icon } from "@iconify/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { GoogleReCaptchaProvider, useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import moment from "moment";
 import ChildDetailEnquiry from "./Steps/ChildDetail";
 import LocationInfoHeader from "./Steps/LocationInfoHeader";
 import ParentDetail from "./Steps/ParentDetail";
@@ -23,6 +24,7 @@ export type EnquiryV3Props = {
   listingType?: string | null;
   centreName?: string;
   centreAddress?: string | null;
+  centreTelephone?: string | null;
   centreLogo?: string | null;
   ratingAverage?: number | null;
   reviewCount?: number | null;
@@ -33,77 +35,35 @@ export type EnquiryV3Props = {
 const ENQUIRY_TYPE_LIVE_TOUR = 4;
 
 const toIsoDate = (value: any): string => {
-  try {
-    if (!value) return "";
-    const d = value instanceof Date ? value : new Date(value);
-    if (Number.isNaN(d.getTime())) return "";
-    return d.toLocaleDateString("en-CA");
-  } catch {
-    return "";
-  }
+  const m = moment(value);
+  return m.isValid() ? m.format("YYYY-MM-DD") : "";
 };
 
 const poweredByLogoSrc = "/logo.svg";
 
-function formatDateForICS(date: Date): string {
-  return (
-    date.getFullYear() +
-    String(date.getMonth() + 1).padStart(2, "0") +
-    String(date.getDate()).padStart(2, "0") +
-    "T" +
-    String(date.getHours()).padStart(2, "0") +
-    String(date.getMinutes()).padStart(2, "0") +
-    "00"
-  );
+const formatVisitDate = (tourDate?: string, tourTime?: string) => {
+  if (!tourDate || !tourTime) return "N/A";
+
+  // tourTime is usually like "3:30pm" or "09:00am"
+  // tourDate is usually like "2026-03-08"
+  const dateTimeStr = `${tourDate} ${tourTime}`;
+  const m = moment(dateTimeStr, ["YYYY-MM-DD h:mma", "YYYY-MM-DD HH:mm"]);
+
+  if (!m.isValid()) {
+    // Fallback if moment can't parse it
+    return tourDate + (tourTime ? ` at ${tourTime}` : "");
+  }
+
+  return m.format("D MMM [at] h:mma");
+};
+
+function formatDateForICS(date: any): string {
+  return moment(date).format("YYYYMMDD[T]HHmm00");
 }
 
 function parseSlotDateTime(slot: string): Date | null {
-  // Handles formats like "8 Dec at 3:30pm", "8 Dec 2025 at 9:00am", "Mon 8 Dec at 3:30pm"
-  const normalized = slot.trim();
-
-  // Extract time part (supports "3:30pm", "9am", "14:30")
-  let hours = 0;
-  let minutes = 0;
-  let timeFound = false;
-
-  const timeMatch12 = normalized.match(/(\d{1,2}):(\d{2})\s*(am|pm)/i);
-  const timeMatch12NoMin = normalized.match(/(\d{1,2})\s*(am|pm)/i);
-  const timeMatch24 = normalized.match(/(\d{2}):(\d{2})/);
-
-  if (timeMatch12) {
-    hours = parseInt(timeMatch12[1]);
-    minutes = parseInt(timeMatch12[2]);
-    const ampm = timeMatch12[3].toLowerCase();
-    if (ampm === "pm" && hours !== 12) hours += 12;
-    if (ampm === "am" && hours === 12) hours = 0;
-    timeFound = true;
-  } else if (timeMatch12NoMin) {
-    hours = parseInt(timeMatch12NoMin[1]);
-    minutes = 0;
-    const ampm = timeMatch12NoMin[2].toLowerCase();
-    if (ampm === "pm" && hours !== 12) hours += 12;
-    if (ampm === "am" && hours === 12) hours = 0;
-    timeFound = true;
-  } else if (timeMatch24) {
-    hours = parseInt(timeMatch24[1]);
-    minutes = parseInt(timeMatch24[2]);
-    timeFound = true;
-  }
-
-  if (!timeFound) return null;
-
-  // Extract date part — try parsing the full string as a date
-  // Strip time portion to help Date parsing
-  const withoutTime = normalized
-    .replace(/(\d{1,2}:\d{2}|\d{1,2})\s*(am|pm)?/gi, "")
-    .replace(/\bat\b/gi, "")
-    .trim();
-  const parsed = new Date(`${withoutTime} ${new Date().getFullYear()}`);
-
-  if (isNaN(parsed.getTime())) return null;
-
-  parsed.setHours(hours, minutes, 0, 0);
-  return parsed;
+  const m = moment(slot, ["D MMM [at] h:mma", "D MMM YYYY [at] h:mma", "ddd D MMM [at] h:mma", "D MMM h:mma"], true);
+  return m.isValid() ? m.toDate() : null;
 }
 
 function downloadICSFile({
@@ -122,9 +82,9 @@ function downloadICSFile({
     return;
   }
 
-  const endDate = new Date(tourDate.getTime() + 60 * 60 * 1000);
-  const now = formatDateForICS(new Date());
-  const uid = `tour-${Date.now()}@careforkids.com.au`;
+  const endDate = moment(tourDate).add(1, "hour").toDate();
+  const now = formatDateForICS(moment());
+  const uid = `tour-${moment().valueOf()}@careforkids.com.au`;
 
   const icsContent = [
     "BEGIN:VCALENDAR",
@@ -164,6 +124,7 @@ const EnquiryV3Content = ({
   listingType = null,
   centreName,
   centreAddress,
+  centreTelephone,
   centreLogo,
   ratingAverage,
   reviewCount,
@@ -372,12 +333,11 @@ const EnquiryV3Content = ({
     hasFetchedToken.current = token;
 
     // Fetch tour availabilities on mount so the first step can show the DatePicker
-    const baseDate = new Date();
-    const endDate = new Date(baseDate);
-    endDate.setDate(endDate.getDate() + 6);
+    const baseDate = moment();
+    const endDate = moment(baseDate).add(6, "days");
 
-    const _startDateStr = baseDate.toLocaleDateString("en-CA");
-    const _endDateStr = endDate.toLocaleDateString("en-CA");
+    const _startDateStr = baseDate.format("YYYY-MM-DD");
+    const _endDateStr = endDate.format("YYYY-MM-DD");
 
     setDataEnquiry((prev: any) => ({
       ...prev,
@@ -427,34 +387,23 @@ const EnquiryV3Content = ({
   return (
     <div id="wrap-enquiry" className="enquiry-v3 overflow-y-auto" style={{ zIndex: 1006 }}>
       <div className={`${`step-container-${currentStep + 1}`} w-full flex flex-col`}>
-        <div className="sticky top-0 bg-white z-[11] py-5 pb-0 sm:px-4">
-          {currentStep < 2 ? (
-            <div className="flex-shrink-0 flex justify-between px-4 sm:px-0 pb-4 md:pb-5">
-              <button
-                onClick={currentStep > 0 ? goToPreviousStep : onBack}
-                className={`${currentStep > 0 || onBack ? "visible" : "invisible"} ${`back-button-step-${currentStep + 1}`}`}
-              >
-                <Icon icon="ic:baseline-arrow-back-ios-new" className="text-black-1 z-5" />
-              </button>
-              <span className="text-[#3A3A3A] font-semibold md:font-medium">Tour Booking</span>
-              <span className="w-6" />
-            </div>
-          ) : (
-            <div className="flex justify-between items-center px-4 md:px-0 py-2 pb-4">
-              <div className="flex items-center gap-[12px]">
-                <div className="bg-[#3a7936] flex flex-col items-center justify-center rounded-full size-[24px]">
-                  <Icon icon="mdi:check" className="text-white text-[16px]" />
+            {currentStep === 2 ? (
+              <div className="sticky top-0 bg-white z-[11] p-4">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-[12px]">
+                    <div className="bg-[#3a7936] flex flex-col items-center justify-center rounded-full size-[24px]">
+                      <Icon icon="mdi:check" className="text-white text-[16px]" />
+                    </div>
+                    <p className="font-semibold leading-[28px] text-[#3a7936] text-[18px]">
+                      Tour Booked
+                    </p>
+                  </div>
+                  <button onClick={onBack} className="p-1 cursor-pointer">
+                    <Icon icon="ic:round-close" className="text-[#3A3A3A] text-2xl" />
+                  </button>
                 </div>
-                <p className="font-semibold leading-[28px] text-[#3a7936] text-[18px]">
-                  Tour Booked
-                </p>
               </div>
-              <button onClick={onBack} className="p-1 cursor-pointer">
-                <Icon icon="ic:round-close" className="text-[#3A3A3A] text-2xl" />
-              </button>
-            </div>
-          )}
-        </div>
+            ) : null}
 
         <div
           id="main-content-enquiry"
@@ -471,7 +420,7 @@ const EnquiryV3Content = ({
             />
           )}
           {currentStep < 2 ? (
-            <ul className="flex-shrink-0 flex items-center gap-x-2 justify-between w-full h-2 mx-auto">
+            <ul className="flex-shrink-0 flex items-center gap-x-2 justify-between w-full h-2 mx-auto bg-[#ececec]">
               {arrSteps.map((step: number, index: number) => {
                 const currentBg =
                   currentStep < step
@@ -482,7 +431,7 @@ const EnquiryV3Content = ({
 
                 const isFirst = index === 0;
                 const isLast = index === arrSteps.length - 1;
-                const roundedClass = isFirst ? "rounded-l-[8px]" : isLast ? "rounded-r-[8px]" : "";
+                const roundedClass = isFirst ? "rounded-r-[8px]" : isLast ? "rounded-l-[8px]" : "";
 
                 return (
                   <li
@@ -493,7 +442,11 @@ const EnquiryV3Content = ({
               })}
             </ul>
           ) : null}
-          <div className={`flex-1 min-w-0 relative ${currentStep < 2 ? "mt-6 md:mt-10" : ""}`}>
+              <div
+                className={`flex-1 min-w-0 relative ${
+                  currentStep < 2 ? "px-4 mt-6 md:mt-10" : ""
+                }`}
+              >
             {currentStep === 0 && (
               <ParentDetail
                 listingType={listingType}
@@ -518,7 +471,7 @@ const EnquiryV3Content = ({
             )}
 
             {currentStep === 2 && (
-              <div className="flex flex-col w-full h-full pb-24 lg:pb-0">
+              <div className="flex flex-col">
                 <div className="bg-white border-[#e3e1dd] border-b border-solid border-t flex items-center px-[16px] py-[24px] w-full">
                   <p className="leading-[24px] text-[#3a3a3a] text-[16px] w-full font-regular">
                     Sit tight! {centreName || "The centre"} may reach out via email or phone prior
@@ -530,9 +483,7 @@ const EnquiryV3Content = ({
                   <div className="flex flex-col gap-[8px] items-start leading-[24px] text-[#3a3a3a] text-[16px] w-full max-w-[358px]">
                     <div className="flex gap-[16px] items-start w-full">
                       <p className="font-semibold shrink-0 w-[105px]">Centre:</p>
-                      <p className="flex-1 font-regular">
-                        {centreName || "Nino Early Learning Adventures"}
-                      </p>
+                      <p className="flex-1 font-regular">{centreName || "N/A"}</p>
                     </div>
                     <div className="flex gap-[16px] items-start w-full">
                       <p className="font-semibold shrink-0 w-[105px]">Address:</p>
@@ -541,16 +492,28 @@ const EnquiryV3Content = ({
                     <div className="flex gap-[16px] items-start w-full">
                       <p className="font-semibold shrink-0 w-[105px]">Date & Time:</p>
                       <p className="flex-1 font-regular">
-                        {dataEnquiry.chooseTime?.slot || "8 Dec at 3:30pm"}
+                        {formatVisitDate(
+                          dataEnquiry.chooseTime?.tourDate,
+                          dataEnquiry.chooseTime?.tourTime,
+                        )}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex flex-col h-[44px] justify-center text-[#3a3a3a] text-[16px] w-full mt-[24px]">
-                    <p>
-                      <span className="underline cursor-pointer">Call the centre</span>
-                      <span>{` if you have any questions`}</span>
-                    </p>
+                    {centreTelephone ? (
+                      <p>
+                        <a
+                          href={`tel:${centreTelephone}`}
+                          className="underline cursor-pointer"
+                        >
+                          Call the centre
+                        </a>
+                        <span>{` if you have any questions`}</span>
+                      </p>
+                    ) : (
+                      <p>{`Call the centre if you have any questions`}</p>
+                    )}
                   </div>
 
                   <div className="flex flex-col gap-[8px] items-start w-full max-w-[358px] mt-[8px]">
