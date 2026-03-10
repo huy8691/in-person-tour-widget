@@ -1,0 +1,9 @@
+.form-control-enquiry:has(input:disabled) label {
+  color: #918ea2;
+}
+.form-control-enquiry:has(input:focus) > div {
+  color: var(--primary);
+}
+.form-control-enquiry:has(input:disabled) > div {
+  display: none;
+}

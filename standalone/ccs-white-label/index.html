@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CCS White-label Embed Demo</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          container: {
+            center: true,
+            padding: {
+              DEFAULT: "1rem",
+              md: "2rem",
+            },
+            screens: {
+              lg: "1180px",
+              xl: "1180px",
+              "2xl": "1180px",
+            },
+          },
+          extend: {
+            colors: {
+              busyTeal: "#1aa39c",
+              busyPink: "#ee2b76",
+              busyNavy: "#2f3a56",
+              busyCharcoal: "#54595f",
+              busyBg: "#fdf8ff",
+            },
+            fontFamily: {
+              sans: ['"Hero Junior"', '"Hero Junior", sans-serif'],
+            },
+            boxShadow: {
+              busyHeader: "0 6px 24px rgba(47,58,86,0.1)",
+              busyHero: "0 24px 60px rgba(47,58,86,0.12)",
+              busyCard: "0 16px 32px rgba(47,58,86,0.08)",
+            },
+            borderRadius: {
+              busy: "32px",
+              busyCard: "24px",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="min-h-screen bg-white font-sans text-busyCharcoal flex flex-col">
+    <header class="sticky top-0 z-20 bg-white shadow-busyHeader/70">
+      <div class="container flex items-center gap-6 py-4">
+        <a
+          href="#"
+          onclick="return false;"
+          aria-label="Busy Bees home"
+          class="shrink-0"
+        >
+          <img
+            src="https://www.busybees.edu.au/wp-content/uploads/2025/10/busy-bees-logo-raspberry.svg"
+            alt="Busy Bees logo"
+            class="h-10 w-auto md:h-12"
+          />
+        </a>
+        <nav
+          class="hidden flex-1 items-center gap-4 text-sm font-semibold text-busyNavy/70 lg:flex"
+          aria-label="Primary navigation"
+        >
+          <button type="button" class="rounded-full px-3 py-2 hover:bg-busyTeal/10 hover:text-busyTeal">
+            About
+          </button>
+          <button type="button" class="rounded-full px-3 py-2 hover:bg-busyTeal/10 hover:text-busyTeal">
+            Locations
+          </button>
+          <button type="button" class="rounded-full px-3 py-2 hover:bg-busyTeal/10 hover:text-busyTeal">
+            Curriculum
+          </button>
+          <button type="button" class="rounded-full px-3 py-2 hover:bg-busyTeal/10 hover:text-busyTeal">
+            Family
+          </button>
+          <button type="button" class="rounded-full px-3 py-2 hover:bg-busyTeal/10 hover:text-busyTeal">
+            Careers
+          </button>
+          <button type="button" class="rounded-full px-3 py-2 hover:bg-busyTeal/10 hover:text-busyTeal">
+            Contact
+          </button>
+        </nav>
+        <div class="ml-auto flex items-center gap-3">
+          <a
+            href="tel:1300851331"
+            class="hidden items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-busyNavy hover:bg-busyTeal/10 md:flex"
+          >
+            <span class="text-lg">📞</span> 1300 851 331
+          </a>
+          <a
+            href="#"
+            onclick="return false;"
+            class="rounded-full bg-busyPink px-5 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+          >
+            Book a Tour
+          </a>
+          <button
+            type="button"
+            aria-label="Open menu"
+            class="flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-full bg-busyNavy/10 lg:hidden"
+          >
+            <span class="h-[2px] w-5 rounded-full bg-busyNavy"></span>
+            <span class="h-[2px] w-5 rounded-full bg-busyNavy"></span>
+            <span class="h-[2px] w-5 rounded-full bg-busyNavy"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+    <main class="flex flex-1 flex-col gap-16 py-12 md:gap-20 md:py-16">
+      <section class="relative overflow-hidden shadow-busyHero">
+        <img
+          src="https://www.busybees.edu.au/wp-content/uploads/2025/09/Busy_Bees_3_5_25_1488-e1758533119973.jpg"
+          alt="Busy Bees educator helping family"
+          class="absolute inset-0 h-full w-full object-cover"
+        />
+        <div class="absolute inset-0 bg-black/55 md:bg-gradient-to-r md:from-black/70 md:via-black/50 md:to-black/20"></div>
+        <div class="container relative flex flex-col gap-8 py-16 md:min-h-[480px] md:justify-center md:py-20">
+          <div class="max-w-xl space-y-6 text-white">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-white/80">
+              Calculate your savings in seconds
+            </p>
+            <h1 class="text-4xl font-semibold text-busyTeal drop-shadow md:text-[52px] md:leading-tight">
+              Child Care Subsidy calculator
+            </h1>
+            <div class="space-y-3 text-base leading-relaxed text-white/90">
+              <p class="text-lg font-semibold text-white">
+                Plan your child care budget with confidence
+              </p>
+              <p>
+                Use our Child Care Subsidy calculator to quickly estimate daily costs, Government CCS entitlements, and out-of-pocket childcare fees.
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-3 pt-1">
+              <a
+                href="#calculator"
+              class="rounded-full bg-busyPink px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+              >
+                Calculate My Subsidy
+              </a>
+              <a
+                href="#FAQS_CCS"
+                class="rounded-full bg-white/15 px-6 py-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/25"
+              >
+                Read Subsidy FAQ's
+              </a>
+            </div>
+            <div class="space-y-1 text-sm">
+              <p class="font-semibold text-white">
+                Need help calculating? <span class="font-normal text-white/80">Chat with our team to calculate your savings.</span>
+              </p>
+              <a href="tel:1300851331" class="font-semibold text-busyTeal hover:text-white">1300 851 331</a>
+              <a href="mailto:info@busybees.edu.au" class="font-semibold text-busyTeal hover:text-white">info@busybees.edu.au</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="container space-y-6 text-[17px] leading-relaxed text-busyCharcoal">
+        <h2 class="text-3xl font-semibold text-busyTeal md:text-[44px]">
+          Every Dollar Counts When You Are Raising A Family.
+        </h2>
+        <div class="flex items-center gap-3 text-busyTeal">
+          <span class="h-[2px] w-16 bg-busyTeal"></span>
+          <span class="h-[2px] w-8 bg-busyTeal/30"></span>
+          <span class="h-[2px] w-12 bg-busyTeal"></span>
+        </div>
+        <p>We’re here to help your family navigate childcare costs.</p>
+        <p>
+          Parents tell us they love the all-in-one Busy Bees fee, we know you will too.
+          <a href="#" onclick="return false;" class="mt-1 block italic text-busyTeal underline">Read our family info pack</a>
+        </p>
+        <p>
+          Use our quick calculator to see your estimated daily fee, how much you could save with the Government’s Child Care Subsidy (CCS).
+          <a href="#calculator" class="mt-1 block italic text-busyTeal underline">Calculate your fee estimate</a>
+        </p>
+        <p>
+          Not sure if your family is eligible for the Government’s Child Care Subsidy?
+          <a href="#FAQS_CCS" class="mt-1 block italic text-busyTeal underline">Read the questions parents ask us the most</a>
+        </p>
+      </section>
+
+      <section class="border-y border-busyTeal/15 bg-busyBg/60">
+        <div class="container grid gap-10 py-12 md:grid-cols-3 md:items-start">
+          <article class="flex items-start gap-5 text-[17px] leading-relaxed">
+            <img
+              src="https://www.busybees.edu.au/wp-content/uploads/2025/07/Globe-Buzz-01-300x210.png"
+              alt="Save More, Stress Less icon"
+              class="h-24 w-24 object-contain"
+            />
+            <div class="space-y-2">
+              <h3 class="text-xl font-semibold text-busyTeal">Save More, Stress Less</h3>
+              <p class="text-sm text-busyCharcoal/80">
+                The Government's Child Care Subsidy helps reduce your out-of-pocket childcare costs.
+              </p>
+            </div>
+          </article>
+          <article class="flex items-start gap-5 text-[17px] leading-relaxed">
+            <img
+              src="https://www.busybees.edu.au/wp-content/uploads/2025/10/Untitled-design-27-e1759799686389-189x300.png"
+              alt="Tailored to you icon"
+              class="h-24 w-24 object-contain"
+            />
+            <div class="space-y-2">
+              <h3 class="text-xl font-semibold text-busyTeal">Tailored To You</h3>
+              <p class="text-sm text-busyCharcoal/80">
+                Your subsidy is based on your income, activity level, and number of children.
+              </p>
+            </div>
+          </article>
+          <article class="flex items-start gap-5 text-[17px] leading-relaxed">
+            <img
+              src="https://www.busybees.edu.au/wp-content/uploads/2025/07/Reading-Buzz-300x193.png"
+              alt="Help you budget icon"
+              class="h-24 w-24 object-contain"
+            />
+            <div class="space-y-2">
+              <h3 class="text-xl font-semibold text-busyTeal">Help You Budget</h3>
+              <p class="text-sm text-busyCharcoal/80">
+                Know your costs upfront, no surprises. One simple daily fee.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="container grid gap-6 md:grid-cols-2">
+        <div class="rounded-busyCard bg-white p-7 shadow-busyCard">
+          <h2 class="text-xl font-semibold text-busyTeal">What is the Child Care Subsidy (CCS)?</h2>
+          <p class="mt-3 leading-relaxed">
+            The CCS is a government payment that reduces your out-of-pocket costs for approved child care services. It replaces the former Child Care Benefit and Child Care Rebate.
+          </p>
+          <a href="#" onclick="return false;" class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-busyTeal hover:text-busyPink">
+            Read CCS FAQs →
+          </a>
+        </div>
+        <div class="rounded-busyCard bg-white p-7 shadow-busyCard">
+          <h2 class="text-xl font-semibold text-busyTeal">How does CCS work?</h2>
+          <p class="mt-3 leading-relaxed">
+            The government pays the subsidy directly to Busy Bees and you cover the remaining gap. Your rate depends on family income, recognised activity hours and how many children are in care.
+          </p>
+          <a href="#" onclick="return false;" class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-busyTeal hover:text-busyPink">
+            Start your estimate →
+          </a>
+        </div>
+      </section>
+
+      <section class="container space-y-10">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <h2 class="text-3xl font-semibold leading-snug text-busyTeal md:text-[44px] md:leading-[1.25]">
+            Simple, All-Inclusive Childcare at Busy Bees.<br />No Surprises<span class="text-busyPink">.</span>
+          </h2>
+          <a
+            href="https://www.busybees.edu.au/wp-content/uploads/2025/08/Welcome-to-Busy-Bees_High-quality-childcare-and-exciting-learning-opportunities_Where-Lifelong-Memories-Begin-1.pdf"
+            target="_blank"
+            class="inline-flex rounded-full bg-busyPink px-6 py-2 text-sm font-semibold text-white hover:-translate-y-0.5 transition"
+          >
+            Family Information Pack
+          </a>
+        </div>
+        <div class="grid gap-6 md:grid-cols-3">
+          <article class="overflow-hidden rounded-busyCard bg-white shadow-busyCard">
+            <img
+              src="https://www.busybees.edu.au/wp-content/uploads/2025/09/Busy_Bees_3_5_25_2865-1.jpg"
+              alt="Everything included"
+              class="h-64 w-full object-cover"
+            />
+            <div class="space-y-2 bg-busyTeal p-6 text-white">
+              <h3 class="text-lg font-semibold">Everything Included</h3>
+              <p class="text-sm leading-relaxed">
+                From meals and nappies to activities and sunscreen, it's all part of one daily fee.
+              </p>
+            </div>
+          </article>
+          <article class="overflow-hidden rounded-busyCard bg-white shadow-busyCard">
+            <img
+              src="https://www.busybees.edu.au/wp-content/uploads/2025/09/Busy_Bees_3_5_25_2823-e1759800066792.jpg"
+              alt="No hidden extras"
+              class="h-64 w-full object-cover"
+            />
+            <div class="space-y-2 bg-busyTeal p-6 text-white">
+              <h3 class="text-lg font-semibold">No Hidden Extras</h3>
+              <p class="text-sm leading-relaxed">
+                What you see is what you pay. No unexpected costs, ever.
+              </p>
+            </div>
+          </article>
+          <article class="overflow-hidden rounded-busyCard bg-white shadow-busyCard">
+            <img
+              src="https://www.busybees.edu.au/wp-content/uploads/2025/09/Busy_Bees_3_5_25_2741-e1759799194162.jpg"
+              alt="Care made easy"
+              class="h-64 w-full object-cover"
+            />
+            <div class="space-y-2 bg-busyTeal p-6 text-white">
+              <h3 class="text-lg font-semibold">Care Made Easy</h3>
+              <p class="text-sm leading-relaxed">
+                We take care of the details. You can focus on your child's joy.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="container">
+        <div class="relative overflow-hidden rounded-busy shadow-busyHero text-white">
+          <div class="slideshow-wrapper absolute inset-0">
+            <div class="slideshow-slide absolute inset-0 opacity-100 transition-opacity duration-[1500ms] bg-cover bg-center" style="background-image: url('https://www.busybees.edu.au/wp-content/uploads/2025/09/portrait-2.png');"></div>
+            <div class="slideshow-slide absolute inset-0 opacity-0 transition-opacity duration-[1500ms] bg-cover bg-center" style="background-image: url('https://www.busybees.edu.au/wp-content/uploads/2025/07/Busy_Bees_3_5_25_2646.jpg');"></div>
+            <div class="slideshow-slide absolute inset-0 opacity-0 transition-opacity duration-[1500ms] bg-cover bg-center" style="background-image: url('https://www.busybees.edu.au/wp-content/uploads/2025/07/Busy_Bees_3_5_25_1366-scaled.jpg');"></div>
+            <div class="slideshow-slide absolute inset-0 opacity-0 transition-opacity duration-[1500ms] bg-cover bg-center" style="background-image: url('https://www.busybees.edu.au/wp-content/uploads/2025/07/Busy_Bees_3_5_25_2089-scaled.jpg');"></div>
+          </div>
+          <div class="absolute inset-0 bg-black/60"></div>
+          <div class="relative flex flex-col gap-4 px-8 py-16 md:max-w-xl md:px-16 md:py-20">
+            <h2 class="text-3xl font-semibold leading-snug md:text-[40px] md:leading-[1.3]">
+              Need Help Understanding Your Childcare Costs?
+            </h2>
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-white/80">
+              Budget with Confidence
+            </p>
+            <p class="leading-relaxed">
+              Talk to our friendly team today for a personalised estimate and access the best care option for your family.
+            </p>
+            <p class="leading-relaxed">
+              Call us or chat online, we’re here to make it simple.
+            </p>
+            <a
+              href="https://www.busybees.edu.au/contact-us/"
+              target="_blank"
+              class="mt-2 inline-flex w-fit rounded-full bg-busyPink px-6 py-3 text-sm font-semibold text-white hover:-translate-y-0.5 transition"
+            >
+              Speak to Our Team
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section id="calculator" class="container space-y-10">
+        <div class="md:flex md:items-center md:justify-between">
+          <div class="flex-1 space-y-4 text-busyCharcoal">
+            <h2 class="text-3xl font-semibold text-busyTeal md:text-[40px] md:leading-tight">
+              Child Care Subsidy Calculator – Get a Quick Estimate
+            </h2>
+            <p>It takes less than 30 seconds to calculate your Child Care Subsidy. Find out how much your family could claim.</p>
+            <p>
+              The Child Care Subsidy (CCS) is a government payment available to families to help cover the costs of childcare. The subsidy is paid directly to your child’s early learning provider to reduce the amount of fees that you pay out-of-pocket.
+            </p>
+            <p>
+              Your out-of-pocket costs depend on how much CCS you are entitled to, depending on your family’s individual situation. If your circumstances change, it’s important to update your details to ensure you continue to receive the best support, entitlements, and care possible.
+            </p>
+            <a
+              id="get-started-btn"
+              href="#calculator-tool"
+            class="inline-flex w-fit rounded-full bg-busyPink px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+            >
+              Get Started
+            </a>
+          </div>
+        <div class="mt-8 flex justify-center md:mt-0 md:w-1/3">
+            <img
+              src="https://www.busybees.edu.au/wp-content/uploads/2025/07/Globe-Buzz-01-300x210.png"
+              alt="Busy Bees mascot"
+            class="max-w-[220px] w-full animate-float"
+            />
+          </div>
+        </div>
+
+        <div
+          id="calculator-tool"
+          class="hidden justify-center"
+        >
+          <iframe
+            id="calculator-iframe"
+            title="Care for Kids CCS Calculator"
+            data-src="http://localhost:3000/?providerId=2"
+            loading="lazy"
+            allowtransparency="true"
+            style="min-height: 640px; max-width: 393px; width: 100%;"
+          ></iframe>
+        </div>
+      </section>
+
+      <section class="container space-y-8" id="FAQS_CCS">
+        <div class="space-y-3">
+          <h2 class="text-3xl font-semibold text-busyTeal md:text-[40px] md:leading-tight">
+            Frequently Asked Questions from Parents
+          </h2>
+        </div>
+
+        <div class="divide-y divide-[#fecd20] border-t border-b border-[#fecd20]">
+          <details class="group py-6 md:py-7">
+            <summary class="flex cursor-pointer items-center justify-between gap-6 text-lg font-semibold text-busyTeal">
+              <span>Am I eligible for the Child Care Subsidy (CCS)?</span>
+              <span class="text-xl transition-transform duration-300 group-open:rotate-180">
+                <i class="fa-solid fa-chevron-down"></i>
+              </span>
+            </summary>
+            <div class="pt-4 text-sm leading-relaxed text-busyCharcoal/90">
+              <p>To qualify for CCS, families must meet the following criteria:</p>
+              <p class="pt-3 font-semibold text-busyCharcoal">1. Residency and Immunisation</p>
+              <ul class="list-disc space-y-1 pl-5">
+                <li>You meet the <a href="https://www.servicesaustralia.gov.au/residence-rules-for-child-care-subsidy?context=41186" class="text-busyPink font-semibold hover:underline">Australian residency rules</a>.</li>
+                <li>Your child must <a href="https://www.servicesaustralia.gov.au/what-are-immunisation-requirements?context=41186" class="text-busyPink font-semibold hover:underline">meet immunisation requirements</a> and not be attending secondary school unless an exemption applies.</li>
+                <li>You pay fees at an approved childcare centre.</li>
+              </ul>
+              <p class="pt-3">For further information, please refer to this <a href="https://www.servicesaustralia.gov.au/who-can-get-child-care-subsidy?context=41186" class="text-busyPink font-semibold hover:underline">CCS information</a>.</p>
+              <p class="pt-3 font-semibold text-busyCharcoal">2. Additional Support</p>
+              <p>Some families may be eligible for <a href="https://www.servicesaustralia.gov.au/individuals/services/centrelink/additional-child-care-subsidy" class="text-busyPink font-semibold hover:underline">additional subsidy</a> benefits. Eligibility criteria include:</p>
+              <ul class="list-disc space-y-1 pl-5">
+                <li>Being a grandparent</li>
+                <li>Experiencing temporary financial hardship</li>
+                <li>Transitioning to work</li>
+                <li>Caring for a vulnerable or at-risk child</li>
+              </ul>
+              <p class="pt-3">For further information, please refer to <a href="https://www.servicesaustralia.gov.au/who-can-get-child-care-subsidy?context=41186" class="text-busyPink font-semibold hover:underline">ACCS information</a>.</p>
+              <p class="pt-3 font-semibold text-busyCharcoal">3. Types of Approved Childcare Services Covered</p>
+              <p>The subsidy applies only to approved childcare services such as those offered at <a href="https://www.busybees.edu.au/our-locations/" class="text-busyPink font-semibold hover:underline">all Busy Bees centres</a>.</p>
+            </div>
+          </details>
+
+          <details class="group py-6 md:py-7">
+            <summary class="flex cursor-pointer items-center justify-between gap-6 text-lg font-semibold text-busyTeal">
+              <span>How much Child Care Subsidy will I receive?</span>
+              <span class="text-xl transition-transform duration-300 group-open:rotate-180">
+                <i class="fa-solid fa-chevron-down"></i>
+              </span>
+            </summary>
+            <div class="pt-4 text-sm leading-relaxed text-busyCharcoal/90">
+              <p>The amount of CCS you can receive depends on four factors:</p>
+              <ul class="list-disc space-y-1 pl-5 pt-3">
+                <li>Your <a href="https://www.servicesaustralia.gov.au/your-income-can-affect-child-care-subsidy?context=41186" class="text-busyPink font-semibold hover:underline">family’s income</a></li>
+                <li>The <a href="https://www.servicesaustralia.gov.au/type-child-care-you-use-can-affect-child-care-subsidy?context=41186#hourlyrate" class="text-busyPink font-semibold hover:underline">hourly rate cap</a> based on the type of approved childcare you use and your child’s age</li>
+                <li>The <a href="https://www.servicesaustralia.gov.au/your-activity-level-affects-child-care-subsidy?context=41186#hoursactivity" class="text-busyPink font-semibold hover:underline">hours of recognised activity</a> you and your partner do</li>
+                <li>The <a href="https://www.servicesaustralia.gov.au/your-number-children-care-can-affect-your-higher-child-care-subsidy?context=41186" class="text-busyPink font-semibold hover:underline">number of children</a> in your care</li>
+              </ul>
+              <p class="pt-3">The amount of subsidised childcare you can access per fortnight applies to each child. If your income or activity changes, update your details with Centrelink to ensure you receive the correct CCS amount.</p>
+            </div>
+          </details>
+
+          <details class="group py-6 md:py-7">
+            <summary class="flex cursor-pointer items-center justify-between gap-6 text-lg font-semibold text-busyTeal">
+              <span>How do I claim the Child Care Subsidy?</span>
+              <span class="text-xl transition-transform duration-300 group-open:rotate-180">
+                <i class="fa-solid fa-chevron-down"></i>
+              </span>
+            </summary>
+            <div class="pt-4 text-sm leading-relaxed text-busyCharcoal/90">
+              <p>Applying for CCS is simple. You can apply online through your <a href="https://my.gov.au/" class="text-busyPink font-semibold hover:underline">myGov account</a> linked to Centrelink. Here’s how:</p>
+              <ol class="list-decimal space-y-1 pl-5 pt-3">
+                <li>Apply for your Customer Reference Number (CRN) from Centrelink.</li>
+                <li>Create a myGov account if you don’t already have one.</li>
+                <li>Once signed in, go to Centrelink &gt; Payments and claims &gt; Make a claim &gt; Families &gt; Child Care Subsidy.</li>
+                <li>Complete your Child Care Subsidy assessment, then submit the claim.</li>
+                <li>Once approved, the subsidy will be paid directly to your childcare provider.</li>
+              </ol>
+            </div>
+          </details>
+
+          <details class="group py-6 md:py-7">
+            <summary class="flex cursor-pointer items-center justify-between gap-6 text-lg font-semibold text-busyTeal">
+              <span>How does the CCS calculator work?</span>
+              <span class="text-xl transition-transform duration-300 group-open:rotate-180">
+                <i class="fa-solid fa-chevron-down"></i>
+              </span>
+            </summary>
+            <div class="pt-4 text-sm leading-relaxed text-busyCharcoal/90">
+              <p>It takes under a minute to find out what portion of subsidised childcare you may be eligible for. The calculator provides an indicative guide to your out-of-pocket costs.</p>
+              <p class="pt-3"><strong>Step 1: Service Information</strong> – Enter details about the Busy Bees centre you wish to attend. The calculator estimates your weekly and fortnightly out-of-pocket costs based on fees and hours in care.</p>
+              <p><strong>Step 2: Activity Test</strong> – Determine if you meet the recognised activity test requirements. The calculator uses your answers to estimate the portion of CCS you can receive.</p>
+              <p><strong>Step 3: Family Information</strong> – Enter how many children will be in care. If you don’t know your CCS percentage, the calculator can estimate it using your activity test answers and taxable income.</p>
+            </div>
+          </details>
+
+          <details class="group py-6 md:py-7">
+            <summary class="flex cursor-pointer items-center justify-between gap-6 text-lg font-semibold text-busyTeal">
+              <span>What’s the hourly rate cap, and how does it affect me?</span>
+              <span class="text-xl transition-transform duration-300 group-open:rotate-180">
+                <i class="fa-solid fa-chevron-down"></i>
+              </span>
+            </summary>
+            <div class="pt-4 text-sm leading-relaxed text-busyCharcoal/90">
+              <p>The hourly rate cap is the maximum amount the government will subsidise per hour, per child, based on the type of care you use. If your provider charges above the cap, you pay the difference. As of 2025, the caps are:</p>
+              <ul class="list-disc space-y-1 pl-5 pt-3">
+                <li><strong>Centre-based day care:</strong> $13.17 per hour</li>
+                <li><strong>Family day care:</strong> $11.73 per hour</li>
+                <li><strong>Outside school hours care:</strong> $13.17 per hour</li>
+              </ul>
+              <p class="pt-3">These caps are indexed annually, so they may increase slightly each year.</p>
+            </div>
+          </details>
+
+          <details class="group py-6 md:py-7">
+            <summary class="flex cursor-pointer items-center justify-between gap-6 text-lg font-semibold text-busyTeal">
+              <span>Can I get CCS for multiple children?</span>
+              <span class="text-xl transition-transform duration-300 group-open:rotate-180">
+                <i class="fa-solid fa-chevron-down"></i>
+              </span>
+            </summary>
+            <div class="pt-4 text-sm leading-relaxed text-busyCharcoal/90">
+              <p>Yes. Families with more than one child under five can receive a higher CCS rate for younger children enrolled in care.</p>
+            </div>
+          </details>
+
+          <details class="group py-6 md:py-7">
+            <summary class="flex cursor-pointer items-center justify-between gap-6 text-lg font-semibold text-busyTeal">
+              <span>What if my income changes?</span>
+              <span class="text-xl transition-transform duration-300 group-open:rotate-180">
+                <i class="fa-solid fa-chevron-down"></i>
+              </span>
+            </summary>
+            <div class="pt-4 text-sm leading-relaxed text-busyCharcoal/90">
+              <p>Keep your details up to date. Changes to income, activity level or family situation can affect how much CCS you receive. Update your information through your myGov account to avoid being overpaid or underpaid.</p>
+            </div>
+          </details>
+
+          <details class="group py-6 md:py-7">
+            <summary class="flex cursor-pointer items-center justify-between gap-6 text-lg font-semibold text-busyTeal">
+              <span>Can I switch childcare providers and still receive CCS?</span>
+              <span class="text-xl transition-transform duration-300 group-open:rotate-180">
+                <i class="fa-solid fa-chevron-down"></i>
+              </span>
+            </summary>
+            <div class="pt-4 text-sm leading-relaxed text-busyCharcoal/90 md:pl-1">
+              <p>Yes. If you switch to a Busy Bees centre, your CCS automatically transfers once your new enrolment is confirmed.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+    </main>
+
+    <section class="bg-busyTeal text-white">
+      <div class="container flex flex-col gap-6 py-10 md:flex-row md:items-center md:justify-between">
+        <div class="space-y-2">
+          <h3 class="text-2xl font-semibold">Join our Hive.</h3>
+          <p class="text-sm text-white/80">
+            Keep up to date with Busy Bees news, resources and events tailored for families.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <a
+            href="#"
+            onclick="return false;"
+            class="rounded-full bg-white px-5 py-2 text-sm font-semibold text-busyTeal"
+          >
+            Book a Tour
+          </a>
+          <a
+            href="tel:1300851331"
+            class="rounded-full border border-white px-5 py-2 text-sm font-semibold"
+          >
+            1300 851 331
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="bg-white text-busyCharcoal">
+      <div class="container flex flex-col gap-10 py-12 md:flex-row md:items-start md:justify-between">
+        <div class="max-w-md space-y-4">
+          <div class="flex items-center gap-3 text-2xl text-busyTeal">
+            <a href="#" onclick="return false;" aria-label="Busy Bees on Facebook">
+              <i class="fa-brands fa-facebook"></i>
+            </a>
+            <a href="#" onclick="return false;" aria-label="Busy Bees on Instagram">
+              <i class="fa-brands fa-instagram"></i>
+            </a>
+            <a href="#" onclick="return false;" aria-label="Busy Bees on YouTube">
+              <i class="fa-brands fa-youtube"></i>
+            </a>
+            <a href="#" onclick="return false;" aria-label="Busy Bees on LinkedIn">
+              <i class="fa-brands fa-linkedin"></i>
+            </a>
+          </div>
+          <h4 class="text-lg font-semibold text-busyTeal">Acknowledgement of Country</h4>
+          <p class="text-sm leading-relaxed">
+            Busy Bees Early Learning acknowledges the Traditional Custodians of country across Australia and recognises their enduring cultural connections to land, sea and community.
+          </p>
+        </div>
+        <div class="grid gap-6 text-sm md:grid-cols-3">
+          <ul class="space-y-2">
+            <li class="font-semibold text-busyTeal">Family</li>
+            <li><a href="#" onclick="return false;">Information Pack</a></li>
+            <li><a href="#" onclick="return false;">CCS Calculator</a></li>
+            <li><a href="#" onclick="return false;">FAQs</a></li>
+          </ul>
+          <ul class="space-y-2">
+            <li class="font-semibold text-busyTeal">Locations</li>
+            <li><a href="#" onclick="return false;">Victoria</a></li>
+            <li><a href="#" onclick="return false;">Queensland</a></li>
+            <li><a href="#" onclick="return false;">New South Wales</a></li>
+          </ul>
+          <ul class="space-y-2">
+            <li class="font-semibold text-busyTeal">Connect</li>
+            <li><a href="#" onclick="return false;">Facebook</a></li>
+            <li><a href="#" onclick="return false;">Instagram</a></li>
+            <li><a href="#" onclick="return false;">LinkedIn</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="px-6 pb-6 text-center text-xs text-busyCharcoal/60 md:px-8">
+        Demo page replicates Busy Bees styling for white-label CCS integration. Replace copy/assets before production.
+      </p>
+    </footer>
+
+    <!-- Floating button to configure iframe URL -->
+    <button
+      id="config-iframe-btn"
+      type="button"
+      class="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-busyTeal text-white shadow-lg transition hover:bg-busyTeal/90 hover:scale-110"
+      aria-label="Configure iframe URL"
+      title="Configure iframe URL"
+    >
+      <i class="fa-solid fa-gear text-xl"></i>
+    </button>
+
+    <!-- Modal for iframe URL configuration -->
+    <div
+      id="iframe-config-modal"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50"
+    >
+      <div class="relative w-full max-w-md rounded-busyCard bg-white p-6 shadow-busyCard">
+        <button
+          id="close-modal-btn"
+          type="button"
+          class="absolute right-4 top-4 text-busyCharcoal hover:text-busyTeal"
+          aria-label="Close modal"
+        >
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+        <h3 class="mb-4 text-xl font-semibold text-busyTeal">Configure Calculator URL</h3>
+        <form id="iframe-config-form" class="space-y-4">
+          <div>
+            <label for="iframe-url-input" class="mb-2 block text-sm font-semibold text-busyCharcoal">
+              Calculator URL
+            </label>
+            <input
+              type="text"
+              id="iframe-url-input"
+              class="w-full rounded-lg border border-busyCharcoal/20 px-4 py-2 text-sm focus:border-busyTeal focus:outline-none focus:ring-2 focus:ring-busyTeal/20"
+              required
+            />
+            <p id="url-error" class="mt-1 hidden text-xs text-busyPink"></p>
+          </div>
+          <div class="flex gap-3">
+            <button
+              type="submit"
+              class="flex-1 rounded-full bg-busyTeal px-4 py-2 text-sm font-semibold text-white transition hover:bg-busyTeal/90"
+            >
+              Confirm
+            </button>
+            <button
+              type="button"
+              id="reset-url-btn"
+              class="rounded-full border border-busyCharcoal/30 px-4 py-2 text-sm font-semibold text-busyCharcoal transition hover:bg-busyCharcoal/10"
+            >
+              Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Iframe URL configuration - auto detect environment
+        const getDefaultIframeUrl = () => {
+          const hostname = window.location.hostname;
+          // If running on localhost, use localhost:3000
+          if (hostname === "localhost" || hostname === "127.0.0.1") {
+            return "http://localhost:3000/?providerId=2";
+          }
+          // Otherwise, use staging/production URL
+          return "https://tools.staging.careforkids.com.au/?providerId=2";
+        };
+        
+        const DEFAULT_IFRAME_URL = getDefaultIframeUrl();
+        const STORAGE_KEY = "ccs_calculator_iframe_url";
+
+        // Load saved URL from localStorage or use default
+        const getSavedUrl = () => {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          return saved || DEFAULT_IFRAME_URL;
+        };
+
+        // Save URL to localStorage
+        const saveUrl = (url) => {
+          localStorage.setItem(STORAGE_KEY, url);
+        };
+
+        // Validate URL
+        const isValidUrl = (urlString) => {
+          try {
+            const url = new URL(urlString);
+            return url.protocol === "http:" || url.protocol === "https:";
+          } catch (e) {
+            return false;
+          }
+        };
+
+        // Update iframe URL
+        const updateIframeUrl = (url) => {
+          const iframe = document.getElementById("calculator-iframe");
+          if (iframe) {
+            iframe.setAttribute("data-src", url);
+            // If iframe is already loaded, update src directly
+            if (iframe.getAttribute("src")) {
+              iframe.src = url;
+            }
+          }
+        };
+
+        // Initialize iframe with saved URL
+        const savedUrl = getSavedUrl();
+        updateIframeUrl(savedUrl);
+
+        // Modal elements
+        const configBtn = document.getElementById("config-iframe-btn");
+        const modal = document.getElementById("iframe-config-modal");
+        const closeBtn = document.getElementById("close-modal-btn");
+        const form = document.getElementById("iframe-config-form");
+        const urlInput = document.getElementById("iframe-url-input");
+        const urlError = document.getElementById("url-error");
+        const resetBtn = document.getElementById("reset-url-btn");
+
+        // Open modal
+        const openModal = () => {
+          if (modal) {
+            urlInput.value = getSavedUrl();
+            urlInput.placeholder = DEFAULT_IFRAME_URL;
+            urlError.classList.add("hidden");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+          }
+        };
+
+        // Close modal
+        const closeModal = () => {
+          if (modal) {
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+            urlError.classList.add("hidden");
+          }
+        };
+
+        // Event listeners
+        if (configBtn) {
+          configBtn.addEventListener("click", openModal);
+        }
+
+        if (closeBtn) {
+          closeBtn.addEventListener("click", closeModal);
+        }
+
+        // Close modal when clicking outside
+        if (modal) {
+          modal.addEventListener("click", (e) => {
+            if (e.target === modal) {
+              closeModal();
+            }
+          });
+        }
+
+        // Form submission
+        if (form) {
+          form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const url = urlInput.value.trim();
+
+            if (!url) {
+              urlError.textContent = "URL is required";
+              urlError.classList.remove("hidden");
+              return;
+            }
+
+            if (!isValidUrl(url)) {
+              urlError.textContent = "Invalid URL format. Please enter a valid http:// or https:// URL";
+              urlError.classList.remove("hidden");
+              return;
+            }
+
+            // Save and update
+            saveUrl(url);
+            updateIframeUrl(url);
+            closeModal();
+          });
+        }
+
+        // Reset button
+        if (resetBtn) {
+          resetBtn.addEventListener("click", () => {
+            saveUrl(DEFAULT_IFRAME_URL);
+            updateIframeUrl(DEFAULT_IFRAME_URL);
+            urlInput.value = DEFAULT_IFRAME_URL;
+            urlError.classList.add("hidden");
+          });
+        }
+
+        // Hero slideshow
+        const slides = Array.from(document.querySelectorAll(".slideshow-slide"));
+        if (slides.length > 1) {
+          let current = 0;
+          setInterval(() => {
+            const next = (current + 1) % slides.length;
+            slides[current].classList.remove("opacity-100");
+            slides[current].classList.add("opacity-0");
+            slides[next].classList.remove("opacity-0");
+            slides[next].classList.add("opacity-100");
+            current = next;
+          }, 4000);
+        }
+
+        // Lazy-load calculator iframe
+        const iframe = document.getElementById("calculator-iframe");
+        const triggerBtn = document.getElementById("get-started-btn");
+        const iframeWrapper = document.getElementById("calculator-tool");
+        
+        // Get allowed origins - include default and saved URL origins
+        const getAllowedOrigins = () => {
+          const origins = [
+          "http://localhost:3000",
+          "https://tools.staging.careforkids.com.au",
+          "https://tools.careforkids.com.au",
+        ];
+          
+          // Add default URL origin
+          try {
+            const defaultUrl = new URL(DEFAULT_IFRAME_URL);
+            if (!origins.includes(defaultUrl.origin)) {
+              origins.push(defaultUrl.origin);
+            }
+          } catch (e) {
+            // Ignore invalid URL
+          }
+          
+          // Add saved URL origin
+          try {
+            const savedUrl = getSavedUrl();
+            const url = new URL(savedUrl);
+            if (!origins.includes(url.origin)) {
+              origins.push(url.origin);
+            }
+          } catch (e) {
+            // Ignore invalid URL
+          }
+          
+          return origins;
+        };
+        
+        const allowedOrigins = getAllowedOrigins();
+        const loadCalculator = () => {
+          if (iframe && !iframe.getAttribute("src") && iframe.dataset.src) {
+            iframe.src = iframe.dataset.src;
+            if (iframeWrapper) {
+              iframeWrapper.classList.remove("hidden");
+              iframeWrapper.classList.add("flex");
+            }
+          }
+        };
+
+        if (triggerBtn) {
+          triggerBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            loadCalculator();
+            triggerBtn.classList.add("hidden");
+            if (iframeWrapper) {
+              requestAnimationFrame(() => {
+                const header = document.querySelector("header");
+                const headerHeight = header ? header.offsetHeight : 0;
+                const offset = 24;
+                const targetY =
+                  iframeWrapper.getBoundingClientRect().top +
+                  window.scrollY -
+                  headerHeight -
+                  offset;
+                window.scrollTo({
+                  top: Math.max(targetY, 0),
+                  behavior: "smooth",
+                });
+              });
+            }
+          });
+        }
+
+        window.addEventListener("message", (event) => {
+          if (!allowedOrigins.includes(event.origin)) {
+            return;
+          }
+        const { type, height, measuredHeight } = event.data || {};
+      if (type === "in-person-tour-widget-height" && typeof height === "number") {
+            const minimum = Math.max(height, 640);
+          console.log("[Parent CCS] received height", {
+            height,
+            measuredHeight,
+            appliedMinHeight: minimum,
+            timestamp: new Date().toISOString(),
+          });
+            if (iframe) {
+              iframe.style.minHeight = `${minimum}px`;
+              iframe.style.height = `${height}px`;
+            }
+          }
+        });
+
+      });
+    </script>
+  </body>
+</html>
+

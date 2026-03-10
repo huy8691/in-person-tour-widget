@@ -1,0 +1,30 @@
+.dateRadioCustom:has(:checked) {
+    background-color: #EEF2FF;
+    border-color: var(--primary);
+}
+
+
+.myRadio {
+    appearance: none;
+    width: 16px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 1px solid black;
+    display: grid;
+    place-content: center;
+
+    &:checked {
+        border-color: white;
+        background-color: var(--primary);
+        background-image: none;
+        box-shadow: none;
+    }
+
+    &:checked::before {
+        content: "";
+        width: 4px;
+        aspect-ratio: 1;
+        background-color: white;
+        border-radius: 50%;
+    }
+}

@@ -1,0 +1,35 @@
+.contentEnquiry::-webkit-scrollbar {
+    width: 14px;
+}
+.contentEnquiry{
+    scroll-behavior: smooth;
+}
+
+.contentEnquiry::-webkit-scrollbar-track {
+    background-color: white !important;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.contentEnquiry::-webkit-scrollbar-thumb {
+    background-color: #D9D8DF;
+    border-radius: 8px !important;
+    box-shadow: none;
+    border-inline: 3px white solid;
+    background-clip: padding-box;
+}
+
+
+.skeleton {
+    animation: skeleton-loading 1s linear infinite alternate;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-color: hsl(200, 20%, 80%);
+    }
+
+    100% {
+        background-color: hsl(200, 20%, 95%);
+    }
+}
